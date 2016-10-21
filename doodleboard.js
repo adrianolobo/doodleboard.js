@@ -10,11 +10,11 @@
             var document = window.document;
             var canvasElement = document.createElement('canvas');
             var canvasContext = canvasElement.getContext('2d');
-            var pointsToDraw = [];
+            var drawSequences = [];
             var isDrawing = false;
 
             //REMOVER
-            window.pointsToDraw = pointsToDraw;
+            window.drawSequences = drawSequences;
 
             originalElement.appendChild(canvasElement);
 
@@ -22,9 +22,9 @@
             canvasElement.style.backgroundColor = '#fff';
 
             // Remover o Mouse Move quando não precisa para performance!!!!
-            canvasElement.addEventListener('mousedown', canvasMouseDown);
-            canvasElement.addEventListener('mousemove', canvasMouseMove);
-            canvasElement.addEventListener('mouseup',   canvasMouseUp);
+            canvasElement.addEventListener('mousedown', canvasMouseDown, false);
+            canvasElement.addEventListener('mousemove', canvasMouseMove, false);
+            canvasElement.addEventListener('mouseup',   canvasMouseUp, false);
 
 
             function canvasMouseUp(e) {
@@ -39,13 +39,29 @@
             }
 
             function canvasMouseDown(e) {
-                addDrawPoints(e);
+                addDrawSequence(e);
                 isDrawing = true;
                 draw();
             }
 
+            function addDrawSequence(e) {
+                drawSequences.push(
+                    {
+                        strokeStyle: '#000000',
+                        lineJoin: 'bevel',
+                        lineWidth: 3,
+                        paths: [
+                            {
+                                x: e.offsetX,
+                                y: e.offsetY,
+                            }
+                        ]
+                    }
+                );
+            }
+
             function addDrawPoints(e) {
-                pointsToDraw.push(
+                drawSequences[drawSequences.length-1].paths.push(
                     {
                         x: e.offsetX,
                         y: e.offsetY,
@@ -54,20 +70,21 @@
             }
 
             function draw() {
-                canvasContext.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                canvasContext.clearRect(0, 0, canvasContext.canvas.width, canvasContext.canvas.height);
 
-                canvasContext.strokeStyle = '#000000';
-                canvasContext.lineJoin = 'round';
-                canvasContext.lineWidth = 5;
-
-                canvasContext.beginPath();
-                for (var i = pointsToDraw.length - 1; i >= 0; i--) {
-                    if(pointsToDraw[i+1]){
-                        canvasContext.moveTo(pointsToDraw[i+1].x, pointsToDraw[i+1].y);
+                for (var i = 0; i < drawSequences.length; i++) {
+                    canvasContext.strokeStyle = drawSequences[i].strokeStyle;
+                    canvasContext.lineJoin = drawSequences[i].lineJoin;
+                    canvasContext.lineWidth = drawSequences[i].lineWidth;
+                    canvasContext.beginPath();
+                    var paths = drawSequences[i].paths
+                    for (var j = paths.length - 1; j >= 0; j--) {
+                        if(j == 0){
+                            canvasContext.moveTo(paths[j].x, paths[j].y);
+                        }else{
+                            canvasContext.lineTo(paths[j].x, paths[j].y);
+                        }
                     }
-
-                    canvasContext.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    canvasContext.closePath();
                     canvasContext.stroke();
                 }
             }
