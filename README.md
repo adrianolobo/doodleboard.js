@@ -24,7 +24,7 @@ var doodleBoard = new DoodleBoard(elementId,configObject);
 
 ```json
 {
-	"colors" : ['#FFFFFF', '#000000'],
+	"colors" : ["#FFFFFF", "#000000"],
 	"linesWidth" : [1,5,10,30]
 }
 ```
