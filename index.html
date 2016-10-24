@@ -7,13 +7,29 @@
 		body{
 			background-color: #c3c3c3
 		}
+
+		html,
+		body{
+			height: 100%;
+		}
+
+		#doodle-block{
+			width: 300px;
+			height: 300px;
+			margin: auto;
+		}
 	</style>
 </head>
 <body>
 	<div id="doodle-block"></div>
 	<script src="doodleboard.js"></script>
 	<script>
-		var doodleBoard = new DoodleBoard('doodle-block')
+		var doodleBoard = new DoodleBoard('doodle-block',
+			{
+				colors: ['#FF0000','#00FF00','#0000FF','#000000','#FFFFFF'],
+				linesWidth: [3,6,12]
+			}
+		);
 	</script>
 </body>
 </html>
